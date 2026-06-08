@@ -1,6 +1,6 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -10,119 +10,68 @@
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
+html,
 body{
 
-background:#efefea;
-font-family:Georgia,serif;
-color:#111;
-
-}
-
-header{
-
-max-width:900px;
-margin:40px auto 20px auto;
-padding:0 20px;
-
-}
-
-header h1{
-
-font-size:48px;
-font-weight:normal;
-letter-spacing:4px;
-margin-bottom:10px;
-
-}
-
-header p{
-
-color:#666;
-font-size:18px;
-line-height:1.6;
-
-}
-
-#playerContainer{
-
-max-width:900px;
-margin:40px auto;
-padding:0 20px;
+margin:0;
+padding:0;
+width:100%;
+height:100%;
+background:#000;
+overflow:hidden;
+cursor:none;
 
 }
 
 #player{
 
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+
+}
+
+#overlay{
+
+position:fixed;
+top:0;
+left:0;
 width:100%;
-aspect-ratio:16/9;
-background:black;
-
-}
-
-#info{
-
-margin-top:25px;
-
-}
-
-#title{
-
-font-size:32px;
-font-weight:normal;
-margin-bottom:10px;
-
-}
-
-#description{
-
-font-size:18px;
-color:#444;
-line-height:1.8;
-
-}
-
-#counter{
-
-margin-top:20px;
-font-size:13px;
-letter-spacing:3px;
-color:#888;
-
-}
-
-#controls{
-
-max-width:900px;
-margin:20px auto 60px auto;
-padding:0 20px;
-
+height:100%;
 display:flex;
-gap:10px;
+justify-content:center;
+align-items:center;
+pointer-events:none;
+font-family:Arial,sans-serif;
+font-size:18px;
+letter-spacing:6px;
+color:white;
+opacity:0;
+transition:opacity .4s;
 
 }
 
-button{
+.flash{
 
-padding:12px 18px;
-cursor:pointer;
-font-size:15px;
-font-family:inherit;
+animation:flash .8s;
 
 }
 
-footer{
+@keyframes flash{
 
-max-width:900px;
-margin:auto;
-padding:20px;
-color:#777;
-font-size:14px;
+0%{
+opacity:0;
+}
+
+50%{
+opacity:.6;
+}
+
+100%{
+opacity:0;
+}
 
 }
 
@@ -132,178 +81,109 @@ font-size:14px;
 
 <body>
 
-<header>
-
-<h1>VIDEO OBSCURA</h1>
-
-<p>
-
-A curated archive of forgotten videos found across YouTube.
-
-</p>
-
-</header>
-
-<div id="playerContainer">
-
 <div id="player"></div>
 
-<div id="info">
-
-<div id="title"></div>
-
-<div id="description"></div>
-
-<div id="counter"></div>
-
+<div id="overlay">
+LOADING NEXT TAPE...
 </div>
-
-</div>
-
-<div id="controls">
-
-<button onclick="previousVideo()">
-◀ PREVIOUS
-</button>
-
-<button onclick="nextRandomVideo()">
-▶ NEXT TAPE
-</button>
-
-</div>
-
-<footer>
-
-Every tape deserves another chance.
-
-</footer>
 
 <script>
 
 const videos=[
 
-{
-title:"Tape #001",
-id:"gdYRYbjLehg",
-description:"Recovered from the digital wilderness."
-},
+"gdYRYbjLehg",
 
-{
-title:"Tape #002",
-id:"zElvf4zL4os",
-description:"An almost forgotten audiovisual fragment."
-},
+"zElvf4zL4os",
 
-{
-title:"Tape #003",
-id:"RUsUQ9tRHHQ",
-description:"Preserved for the archive."
-},
+"RUsUQ9tRHHQ",
 
-{
-title:"Tape #004",
-id:"J1NHGypezNw",
-description:"Nobody expected this recording to survive."
-},
+"J1NHGypezNw",
 
-{
-title:"Tape #005",
-id:"gqn6bDA0B9k",
-description:"A strange signal still floating around YouTube."
-},
+"gqn6bDA0B9k",
 
-{
-title:"Tape #006",
-id:"b7HtHD8i0XU",
-description:"Filed into the archive."
-},
+"b7HtHD8i0XU",
 
-{
-title:"Tape #007",
-id:"o1d28X0lkJ4",
-description:"Another accidental masterpiece."
-}
+"o1d28X0lkJ4"
 
 ];
 
-let currentIndex=0;
 let player;
 
-function updateInfo(){
+let current=-1;
 
-document.getElementById("title").textContent=
-videos[currentIndex].title;
+function randomVideo(){
 
-document.getElementById("description").textContent=
-videos[currentIndex].description;
+if(videos.length===1){
 
-document.getElementById("counter").textContent=
-"ARCHIVE "+String(currentIndex+1).padStart(4,"0");
+return 0;
 
 }
 
-function loadVideo(index){
-
-currentIndex=index;
-
-player.loadVideoById(videos[currentIndex].id);
-
-updateInfo();
-
-}
-
-function nextRandomVideo(){
-
-let next;
+let n;
 
 do{
 
-next=Math.floor(Math.random()*videos.length);
-
-}while(next===currentIndex && videos.length>1);
-
-loadVideo(next);
+n=Math.floor(Math.random()*videos.length);
 
 }
 
-function previousVideo(){
+while(n===current);
 
-currentIndex--;
-
-if(currentIndex<0){
-
-currentIndex=videos.length-1;
+return n;
 
 }
 
-loadVideo(currentIndex);
+function nextVideo(){
+
+const overlay=document.getElementById("overlay");
+
+overlay.classList.remove("flash");
+
+void overlay.offsetWidth;
+
+overlay.classList.add("flash");
+
+current=randomVideo();
+
+player.loadVideoById(videos[current]);
 
 }
 
 function onYouTubeIframeAPIReady(){
 
-player=new YT.Player('player',{
+current=randomVideo();
 
-videoId:videos[0].id,
+player=new YT.Player("player",{
+
+width:"100%",
+
+height:"100%",
+
+videoId:videos[current],
 
 playerVars:{
+
+autoplay:1,
+
+controls:0,
+
 rel:0,
-modestbranding:1
+
+modestbranding:1,
+
+playsinline:1,
+
+fs:1
+
 },
 
 events:{
 
-'onReady':function(){
-
-updateInfo();
-
-},
-
-'onStateChange':function(event){
+onStateChange:function(event){
 
 if(event.data===YT.PlayerState.ENDED){
 
-nextRandomVideo();
+nextVideo();
 
 }
 
@@ -315,10 +195,34 @@ nextRandomVideo();
 
 }
 
+document.body.addEventListener("click",()=>{
+
+const el=document.documentElement;
+
+if(el.requestFullscreen){
+
+el.requestFullscreen();
+
+}
+
+});
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.code==="Space"){
+
+e.preventDefault();
+
+nextVideo();
+
+}
+
+});
+
 </script>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 
 </body>
+
 </html>
-```
