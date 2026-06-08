@@ -1,11 +1,10 @@
 ```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>VIDEO OBSCURA</title>
 
@@ -20,176 +19,110 @@ box-sizing:border-box;
 body{
 
 background:#efefea;
-
 font-family:Georgia,serif;
-
-overflow:hidden;
-
 color:#111;
 
 }
 
-#header{
+header{
 
-position:fixed;
-
-top:25px;
-
-left:40px;
-
-z-index:100;
+max-width:900px;
+margin:40px auto 20px auto;
+padding:0 20px;
 
 }
 
-#header h1{
+header h1{
 
-font-size:42px;
-
+font-size:48px;
 font-weight:normal;
-
 letter-spacing:4px;
-
-}
-
-#header p{
-
-margin-top:8px;
-
-font-size:14px;
-
-color:#666;
-
-max-width:420px;
-
-}
-
-#hint{
-
-position:fixed;
-
-bottom:20px;
-
-right:30px;
-
-font-size:12px;
-
-color:#777;
-
-z-index:100;
-
-}
-
-#gallery{
-
-display:flex;
-
-height:100vh;
-
-overflow-x:auto;
-
-overflow-y:hidden;
-
-scroll-snap-type:x mandatory;
-
-scroll-behavior:smooth;
-
-}
-
-#gallery::-webkit-scrollbar{
-
-height:10px;
-
-}
-
-#gallery::-webkit-scrollbar-thumb{
-
-background:#bbb;
-
-}
-
-.slide{
-
-flex:0 0 100vw;
-
-height:100vh;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-padding:120px;
-
-scroll-snap-align:start;
-
-}
-
-.card{
-
-width:min(900px,90vw);
-
-}
-
-.card h2{
-
-font-size:36px;
-
-font-weight:normal;
-
 margin-bottom:10px;
 
 }
 
-.meta{
-
-font-size:14px;
+header p{
 
 color:#666;
-
-margin-bottom:25px;
-
-letter-spacing:1px;
-
-text-transform:uppercase;
+font-size:18px;
+line-height:1.6;
 
 }
 
-iframe{
+#playerContainer{
+
+max-width:900px;
+margin:40px auto;
+padding:0 20px;
+
+}
+
+#player{
 
 width:100%;
-
 aspect-ratio:16/9;
-
-border:0;
-
 background:black;
 
 }
 
-.desc{
+#info{
 
 margin-top:25px;
-
-font-size:18px;
-
-line-height:1.8;
-
-color:#444;
-
-max-width:760px;
 
 }
 
-.number{
+#title{
 
-margin-top:25px;
+font-size:32px;
+font-weight:normal;
+margin-bottom:10px;
 
+}
+
+#description{
+
+font-size:18px;
+color:#444;
+line-height:1.8;
+
+}
+
+#counter{
+
+margin-top:20px;
 font-size:13px;
-
 letter-spacing:3px;
-
 color:#888;
+
+}
+
+#controls{
+
+max-width:900px;
+margin:20px auto 60px auto;
+padding:0 20px;
+
+display:flex;
+gap:10px;
+
+}
+
+button{
+
+padding:12px 18px;
+cursor:pointer;
+font-size:15px;
+font-family:inherit;
+
+}
+
+footer{
+
+max-width:900px;
+margin:auto;
+padding:20px;
+color:#777;
+font-size:14px;
 
 }
 
@@ -199,197 +132,193 @@ color:#888;
 
 <body>
 
-<div id="header">
+<header>
 
 <h1>VIDEO OBSCURA</h1>
 
 <p>
 
-A curated archive of forgotten home videos,
-local television and strange audiovisual artifacts
-found across YouTube.
+A curated archive of forgotten videos found across YouTube.
 
 </p>
 
+</header>
+
+<div id="playerContainer">
+
+<div id="player"></div>
+
+<div id="info">
+
+<div id="title"></div>
+
+<div id="description"></div>
+
+<div id="counter"></div>
+
 </div>
 
-<div id="hint">
+</div>
 
-← desplazate horizontalmente →
+<div id="controls">
+
+<button onclick="previousVideo()">
+◀ PREVIOUS
+</button>
+
+<button onclick="nextRandomVideo()">
+▶ NEXT TAPE
+</button>
 
 </div>
 
-<div id="gallery"></div>
+<footer>
+
+Every tape deserves another chance.
+
+</footer>
 
 <script>
 
 const videos=[
 
 {
-
 title:"Tape #001",
-
-youtube:"gdYRYbjLehg",
-
-year:"Unknown",
-
-country:"Unknown",
-
+id:"gdYRYbjLehg",
 description:"Recovered from the digital wilderness."
-
 },
 
 {
-
 title:"Tape #002",
-
-youtube:"zElvf4zL4os",
-
-year:"Unknown",
-
-country:"Unknown",
-
+id:"zElvf4zL4os",
 description:"An almost forgotten audiovisual fragment."
-
 },
 
 {
-
 title:"Tape #003",
-
-youtube:"RUsUQ9tRHHQ",
-
-year:"Unknown",
-
-country:"Unknown",
-
+id:"RUsUQ9tRHHQ",
 description:"Preserved for the archive."
-
 },
 
 {
-
 title:"Tape #004",
-
-youtube:"J1NHGypezNw",
-
-year:"Unknown",
-
-country:"Unknown",
-
+id:"J1NHGypezNw",
 description:"Nobody expected this recording to survive."
-
 },
 
 {
-
 title:"Tape #005",
-
-youtube:"gqn6bDA0B9k",
-
-year:"Unknown",
-
-country:"Unknown",
-
+id:"gqn6bDA0B9k",
 description:"A strange signal still floating around YouTube."
-
 },
 
 {
-
 title:"Tape #006",
-
-youtube:"b7HtHD8i0XU",
-
-year:"Unknown",
-
-country:"Unknown",
-
+id:"b7HtHD8i0XU",
 description:"Filed into the archive."
-
 },
 
 {
-
 title:"Tape #007",
-
-youtube:"o1d28X0lkJ4",
-
-year:"Unknown",
-
-country:"Unknown",
-
+id:"o1d28X0lkJ4",
 description:"Another accidental masterpiece."
-
 }
 
 ];
 
-const gallery=document.getElementById("gallery");
+let currentIndex=0;
+let player;
 
-videos.forEach((video,index)=>{
+function updateInfo(){
 
-const slide=document.createElement("section");
+document.getElementById("title").textContent=
+videos[currentIndex].title;
 
-slide.className="slide";
+document.getElementById("description").textContent=
+videos[currentIndex].description;
 
-slide.innerHTML=`
-
-<div class="card">
-
-<h2>${video.title}</h2>
-
-<div class="meta">
-
-${video.year} · ${video.country}
-
-</div>
-
-<iframe
-
-src="https://www.youtube.com/embed/${video.youtube}"
-
-loading="lazy"
-
-allowfullscreen>
-
-</iframe>
-
-<div class="desc">
-
-${video.description}
-
-</div>
-
-<div class="number">
-
-ARCHIVE ${String(index+1).padStart(4,"0")}
-
-</div>
-
-</div>
-
-`;
-
-gallery.appendChild(slide);
-
-});
-
-window.addEventListener("wheel",function(e){
-
-if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){
-
-e.preventDefault();
-
-gallery.scrollLeft+=e.deltaY;
+document.getElementById("counter").textContent=
+"ARCHIVE "+String(currentIndex+1).padStart(4,"0");
 
 }
 
-},{passive:false});
+function loadVideo(index){
+
+currentIndex=index;
+
+player.loadVideoById(videos[currentIndex].id);
+
+updateInfo();
+
+}
+
+function nextRandomVideo(){
+
+let next;
+
+do{
+
+next=Math.floor(Math.random()*videos.length);
+
+}while(next===currentIndex && videos.length>1);
+
+loadVideo(next);
+
+}
+
+function previousVideo(){
+
+currentIndex--;
+
+if(currentIndex<0){
+
+currentIndex=videos.length-1;
+
+}
+
+loadVideo(currentIndex);
+
+}
+
+function onYouTubeIframeAPIReady(){
+
+player=new YT.Player('player',{
+
+videoId:videos[0].id,
+
+playerVars:{
+rel:0,
+modestbranding:1
+},
+
+events:{
+
+'onReady':function(){
+
+updateInfo();
+
+},
+
+'onStateChange':function(event){
+
+if(event.data===YT.PlayerState.ENDED){
+
+nextRandomVideo();
+
+}
+
+}
+
+}
+
+});
+
+}
 
 </script>
 
-</body>
+<script src="https://www.youtube.com/iframe_api"></script>
 
+</body>
 </html>
 ```
