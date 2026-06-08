@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +7,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>VIDEO OBSCURA</title>
+<title>VIDEO OBSCURA TV</title>
 
 <style>
 
@@ -19,7 +20,7 @@ width:100%;
 height:100%;
 background:#000;
 overflow:hidden;
-cursor:none;
+font-family:Arial,Helvetica,sans-serif;
 
 }
 
@@ -41,37 +42,69 @@ left:0;
 width:100%;
 height:100%;
 display:flex;
-justify-content:center;
 align-items:center;
-pointer-events:none;
-font-family:Arial,sans-serif;
-font-size:18px;
-letter-spacing:6px;
+justify-content:center;
+background:black;
 color:white;
+font-size:28px;
+letter-spacing:8px;
 opacity:0;
-transition:opacity .4s;
+pointer-events:none;
+transition:.3s;
 
 }
 
-.flash{
+#overlay.show{
 
-animation:flash .8s;
+opacity:.92;
 
 }
 
-@keyframes flash{
+#hud{
 
-0%{
-opacity:0;
+position:fixed;
+top:20px;
+left:20px;
+z-index:1000;
+color:white;
+font-size:12px;
+letter-spacing:3px;
+opacity:.35;
+transition:.3s;
+
 }
 
-50%{
-opacity:.6;
+#hud:hover{
+
+opacity:1;
+
 }
 
-100%{
-opacity:0;
+#bottom{
+
+position:fixed;
+bottom:20px;
+left:20px;
+z-index:1000;
+display:flex;
+gap:10px;
+
 }
+
+button{
+
+background:rgba(255,255,255,.12);
+border:1px solid rgba(255,255,255,.25);
+color:white;
+padding:10px 14px;
+cursor:pointer;
+backdrop-filter:blur(4px);
+
+}
+
+button:hover{
+
+background:rgba(255,255,255,.22);
 
 }
 
@@ -84,7 +117,31 @@ opacity:0;
 <div id="player"></div>
 
 <div id="overlay">
-LOADING NEXT TAPE...
+
+TRACKING...
+
+</div>
+
+<div id="hud">
+
+VIDEO OBSCURA TV
+
+</div>
+
+<div id="bottom">
+
+<button onclick="previousVideo()">
+◀
+</button>
+
+<button onclick="randomVideo()">
+RANDOM
+</button>
+
+<button onclick="nextVideo()">
+▶
+</button>
+
 </div>
 
 <script>
@@ -92,66 +149,98 @@ LOADING NEXT TAPE...
 const videos=[
 
 "gdYRYbjLehg",
-
 "zElvf4zL4os",
-
 "RUsUQ9tRHHQ",
-
 "J1NHGypezNw",
-
 "gqn6bDA0B9k",
-
 "b7HtHD8i0XU",
-
 "o1d28X0lkJ4"
 
 ];
 
 let player;
 
-let current=-1;
+let order=[];
 
-function randomVideo(){
+let pointer=0;
 
-if(videos.length===1){
+function shuffle(){
 
-return 0;
+order=[...videos];
 
-}
+for(let i=order.length-1;i>0;i--){
 
-let n;
+const j=Math.floor(Math.random()*(i+1));
 
-do{
-
-n=Math.floor(Math.random()*videos.length);
+[order[i],order[j]]=[order[j],order[i]];
 
 }
 
-while(n===current);
+pointer=0;
 
-return n;
+}
+
+shuffle();
+
+function showTracking(callback){
+
+const overlay=document.getElementById("overlay");
+
+overlay.classList.add("show");
+
+setTimeout(()=>{
+
+overlay.classList.remove("show");
+
+callback();
+
+},800);
+
+}
+
+function loadCurrent(){
+
+player.loadVideoById(order[pointer]);
 
 }
 
 function nextVideo(){
 
-const overlay=document.getElementById("overlay");
+pointer++;
 
-overlay.classList.remove("flash");
+if(pointer>=order.length){
 
-void overlay.offsetWidth;
+shuffle();
 
-overlay.classList.add("flash");
+}
 
-current=randomVideo();
+showTracking(loadCurrent);
 
-player.loadVideoById(videos[current]);
+}
+
+function previousVideo(){
+
+pointer--;
+
+if(pointer<0){
+
+pointer=order.length-1;
+
+}
+
+showTracking(loadCurrent);
+
+}
+
+function randomVideo(){
+
+pointer=Math.floor(Math.random()*order.length);
+
+showTracking(loadCurrent);
 
 }
 
 function onYouTubeIframeAPIReady(){
-
-current=randomVideo();
 
 player=new YT.Player("player",{
 
@@ -159,21 +248,14 @@ width:"100%",
 
 height:"100%",
 
-videoId:videos[current],
+videoId:order[pointer],
 
 playerVars:{
 
-autoplay:1,
-
-controls:0,
-
+controls:1,
 rel:0,
-
 modestbranding:1,
-
-playsinline:1,
-
-fs:1
+playsinline:1
 
 },
 
@@ -195,25 +277,23 @@ nextVideo();
 
 }
 
-document.body.addEventListener("click",()=>{
+document.addEventListener("keydown",function(e){
 
-const el=document.documentElement;
+if(e.key==="ArrowRight"){
 
-if(el.requestFullscreen){
-
-el.requestFullscreen();
+nextVideo();
 
 }
 
-});
+if(e.key==="ArrowLeft"){
 
-document.addEventListener("keydown",(e)=>{
+previousVideo();
 
-if(e.code==="Space"){
+}
 
-e.preventDefault();
+if(e.key==="r" || e.key==="R"){
 
-nextVideo();
+randomVideo();
 
 }
 
@@ -226,3 +306,4 @@ nextVideo();
 </body>
 
 </html>
+```
