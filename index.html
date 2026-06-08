@@ -1,84 +1,276 @@
+```html
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="en">
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <title>VIDEO OBSCURA</title>
+<title>VIDEO OBSCURA</title>
 
-    <meta name="description"
-        content="Archivo de videos caseros, televisión olvidada y rarezas audiovisuales.">
+<style>
 
-    <link rel="stylesheet" href="css/style.css">
+body{
+
+margin:0;
+padding:0;
+
+background:#f3f3ef;
+
+color:#111;
+
+font-family:Georgia,serif;
+
+line-height:1.8;
+
+}
+
+#container{
+
+max-width:820px;
+
+margin:auto;
+
+padding:60px 30px;
+
+}
+
+h1{
+
+font-weight:normal;
+
+font-size:54px;
+
+letter-spacing:3px;
+
+margin:0;
+
+}
+
+.subtitle{
+
+margin-top:10px;
+
+font-size:20px;
+
+color:#666;
+
+}
+
+hr{
+
+margin:45px 0;
+
+border:none;
+
+border-top:1px solid #cfcfcf;
+
+}
+
+.entry{
+
+margin-bottom:90px;
+
+}
+
+.entry h2{
+
+font-weight:normal;
+
+font-size:30px;
+
+margin-bottom:20px;
+
+}
+
+.entry iframe{
+
+width:100%;
+
+aspect-ratio:16/9;
+
+border:none;
+
+display:block;
+
+margin-bottom:20px;
+
+}
+
+.entry p{
+
+font-size:18px;
+
+color:#444;
+
+}
+
+footer{
+
+margin-top:80px;
+
+padding-bottom:80px;
+
+color:#777;
+
+font-size:15px;
+
+}
+
+a{
+
+color:black;
+
+text-decoration:none;
+
+}
+
+a:hover{
+
+text-decoration:underline;
+
+}
+
+</style>
 
 </head>
 
 <body>
 
-    <header>
+<div id="container">
 
-        <h1>VIDEO OBSCURA</h1>
+<header>
 
-        <p>
-            Un archivo de cintas perdidas de Internet
-        </p>
+<h1>VIDEO OBSCURA</h1>
 
-    </header>
+<div class="subtitle">
 
-    <main>
+A curated archive of forgotten videos found across YouTube.
 
-        <section id="toolbar">
+</div>
 
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Buscar entre las cintas..."
-                autocomplete="off">
+<hr>
 
-            <button id="randomButton">
-                🎲 Abrir una cinta al azar
-            </button>
+</header>
 
-        </section>
+<main id="archive">
 
-        <section>
+</main>
 
-            <h2>Cinta destacada</h2>
+<footer>
 
-            <div id="featuredVideo">
+<hr>
 
-                Cargando...
+Every tape deserves another chance.
 
-            </div>
+</footer>
 
-        </section>
+</div>
 
-        <section>
+<script>
 
-            <h2>Archivo</h2>
+const videos=[
 
-            <div id="videoGrid">
+{
 
-            </div>
+title:"Tape #001",
 
-        </section>
+youtube:"gdYRYbjLehg",
 
-    </main>
+text:"Recovered from the digital wilderness."
 
-    <footer>
+},
 
-        <p>
+{
 
-            VIDEO OBSCURA
+title:"Tape #002",
 
-        </p>
+youtube:"zElvf4zL4os",
 
-    </footer>
+text:"An almost forgotten audiovisual fragment."
 
-    <script src="js/app.js"></script>
+},
+
+{
+
+title:"Tape #003",
+
+youtube:"RUsUQ9tRHHQ",
+
+text:"Preserved for the archive."
+
+},
+
+{
+
+title:"Tape #004",
+
+youtube:"J1NHGypezNw",
+
+text:"A mysterious recording that somehow survived."
+
+},
+
+{
+
+title:"Tape #005",
+
+youtube:"gqn6bDA0B9k",
+
+text:"Another strange signal from YouTube."
+
+},
+
+{
+
+title:"Tape #006",
+
+youtube:"b7HtHD8i0XU",
+
+text:"An accidental masterpiece."
+
+},
+
+{
+
+title:"Tape #007",
+
+youtube:"o1d28X0lkJ4",
+
+text:"Filed into the archive before disappearing."
+
+}
+
+];
+
+const archive=document.getElementById("archive");
+
+videos.forEach(video=>{
+
+const article=document.createElement("article");
+
+article.className="entry";
+
+article.innerHTML=`
+
+<h2>${video.title}</h2>
+
+<iframe
+src="https://www.youtube.com/embed/${video.youtube}"
+allowfullscreen
+loading="lazy">
+</iframe>
+
+<p>${video.text}</p>
+
+`;
+
+archive.appendChild(article);
+
+});
+
+</script>
 
 </body>
-
 </html>
+```
