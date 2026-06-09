@@ -1,153 +1,73 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>KIKE TV</title>
-
 <style>
-
-html,
-body{
-
-margin:0;
-padding:0;
-width:100%;
-height:100%;
-background:#000;
-overflow:hidden;
-font-family:Arial,Helvetica,sans-serif;
-
+html,body{
+margin:0;padding:0;width:100%;height:100%;
+background:#000;overflow:hidden;font-family:Arial,sans-serif;
 }
-
-#player{
-
-position:fixed;
-top:0;
-left:0;
-width:100vw;
-height:100vh;
-
+#player{position:fixed;inset:0;}
+#startup{
+position:fixed;inset:0;background:#000;color:#fff;
+display:flex;align-items:center;justify-content:center;
+z-index:9999;cursor:pointer;transition:opacity .5s;
 }
-
-#overlay{
-
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-display:flex;
-align-items:center;
-justify-content:center;
-background:black;
-color:white;
-font-size:28px;
-letter-spacing:8px;
-opacity:0;
-pointer-events:none;
-transition:.3s;
-
+#startup .box{text-align:center}
+#startup h1{font-size:72px;letter-spacing:12px;margin:0 0 20px;font-weight:300}
+#startup p{letter-spacing:6px;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.25}}
+#tracking{
+position:fixed;inset:0;background:#000;color:#fff;
+display:flex;align-items:center;justify-content:center;
+letter-spacing:8px;font-size:28px;
+opacity:0;pointer-events:none;transition:opacity .25s;z-index:9000;
 }
-
-#overlay.show{
-
-opacity:.92;
-
+#tracking.show{opacity:.9}
+#controls{
+position:fixed;left:50%;bottom:25px;transform:translateX(-50%);
+display:flex;gap:14px;z-index:9500;
+background:rgba(0,0,0,.35);padding:10px 14px;border-radius:40px;
+backdrop-filter:blur(8px);
+opacity:0;transition:opacity .3s;
 }
-
-#hud{
-
-position:fixed;
-top:20px;
-left:20px;
-z-index:1000;
-color:white;
-font-size:12px;
-letter-spacing:3px;
-opacity:.35;
-transition:.3s;
-
-}
-
-#hud:hover{
-
-opacity:1;
-
-}
-
-#bottom{
-
-position:fixed;
-bottom:20px;
-left:20px;
-z-index:1000;
-display:flex;
-gap:10px;
-
-}
-
-button{
-
-background:rgba(255,255,255,.12);
+#controls.show{opacity:1}
+.ctrl{
+width:56px;height:56px;border-radius:50%;
 border:1px solid rgba(255,255,255,.25);
-color:white;
-padding:10px 14px;
-cursor:pointer;
-backdrop-filter:blur(4px);
-
+background:rgba(255,255,255,.08);color:#fff;
+font-size:22px;cursor:pointer;
 }
-
-button:hover{
-
-background:rgba(255,255,255,.22);
-
-}
-
+.ctrl:hover{transform:scale(1.08)}
+body.hidecursor{cursor:none}
 </style>
-
 </head>
-
-<body>
+<body class="hidecursor">
 
 <div id="player"></div>
 
-<div id="overlay">
-
-TRACKING...
-
+<div id="startup">
+  <div class="box">
+    <h1>KIKE TV</h1>
+    <p>CLICK TO TURN ON</p>
+  </div>
 </div>
 
-<div id="hud">
+<div id="tracking">TRACKING...</div>
 
-VIDEO OBSCURA TV
-
+<div id="controls">
+<button class="ctrl" onclick="prevVideo()">⏮</button>
+<button class="ctrl" onclick="toggleMute()">🔊</button>
+<button class="ctrl" onclick="randomVideo()">🎲</button>
+<button class="ctrl" onclick="nextVideo()">⏭</button>
 </div>
 
-<div id="bottom">
-
-<button onclick="previousVideo()">
-◀
-</button>
-
-<button onclick="randomVideo()">
-RANDOM
-</button>
-
-<button onclick="nextVideo()">
-▶
-</button>
-
-</div>
-
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-
 const videos=[
-
 "gdYRYbjLehg",
 "zElvf4zL4os",
 "RUsUQ9tRHHQ",
@@ -155,155 +75,113 @@ const videos=[
 "gqn6bDA0B9k",
 "b7HtHD8i0XU",
 "o1d28X0lkJ4"
-
 ];
 
 let player;
-
+let muted=false;
 let order=[];
-
-let pointer=0;
+let idx=0;
 
 function shuffle(){
-
-order=[...videos];
-
-for(let i=order.length-1;i>0;i--){
-
-const j=Math.floor(Math.random()*(i+1));
-
-[order[i],order[j]]=[order[j],order[i]];
-
+  order=[...videos];
+  for(let i=order.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [order[i],order[j]]=[order[j],order[i]];
+  }
+  idx=0;
 }
-
-pointer=0;
-
-}
-
 shuffle();
 
-function showTracking(callback){
-
-const overlay=document.getElementById("overlay");
-
-overlay.classList.add("show");
-
-setTimeout(()=>{
-
-overlay.classList.remove("show");
-
-callback();
-
-},800);
-
+function tracking(cb){
+ const t=document.getElementById("tracking");
+ t.classList.add("show");
+ setTimeout(()=>{
+   t.classList.remove("show");
+   cb();
+ },700);
 }
 
 function loadCurrent(){
-
-player.loadVideoById(order[pointer]);
-
+ if(player) player.loadVideoById(order[idx]);
 }
 
 function nextVideo(){
-
-pointer++;
-
-if(pointer>=order.length){
-
-shuffle();
-
+ idx++;
+ if(idx>=order.length){
+   shuffle();
+ }
+ tracking(loadCurrent);
 }
 
-showTracking(loadCurrent);
-
-}
-
-function previousVideo(){
-
-pointer--;
-
-if(pointer<0){
-
-pointer=order.length-1;
-
-}
-
-showTracking(loadCurrent);
-
+function prevVideo(){
+ idx--;
+ if(idx<0) idx=order.length-1;
+ tracking(loadCurrent);
 }
 
 function randomVideo(){
+ idx=Math.floor(Math.random()*order.length);
+ tracking(loadCurrent);
+}
 
-pointer=Math.floor(Math.random()*order.length);
-
-showTracking(loadCurrent);
-
+function toggleMute(){
+ if(!player) return;
+ muted=!muted;
+ if(muted) player.mute();
+ else player.unMute();
 }
 
 function onYouTubeIframeAPIReady(){
-
-player=new YT.Player("player",{
-
-width:"100%",
-
-height:"100%",
-
-videoId:order[pointer],
-
-playerVars:{
-
-controls:1,
-rel:0,
-modestbranding:1,
-playsinline:1
-
-},
-
-events:{
-
-onStateChange:function(event){
-
-if(event.data===YT.PlayerState.ENDED){
-
-nextVideo();
-
+ player=new YT.Player('player',{
+   width:'100%',
+   height:'100%',
+   videoId:order[idx],
+   playerVars:{
+     autoplay:0,
+     controls:1,
+     rel:0,
+     modestbranding:1,
+     playsinline:1
+   },
+   events:{
+     onStateChange:function(e){
+       if(e.data===YT.PlayerState.ENDED){
+         nextVideo();
+       }
+     }
+   }
+ });
 }
 
-}
-
-}
-
+const startup=document.getElementById("startup");
+startup.addEventListener("click",()=>{
+ startup.style.opacity="0";
+ setTimeout(()=>startup.remove(),500);
+ if(player){
+   player.playVideo();
+ }
+ showControls();
 });
 
+const controls=document.getElementById("controls");
+let timer;
+function showControls(){
+ document.body.classList.remove("hidecursor");
+ controls.classList.add("show");
+ clearTimeout(timer);
+ timer=setTimeout(()=>{
+   controls.classList.remove("show");
+   document.body.classList.add("hidecursor");
+ },3000);
 }
+document.addEventListener("mousemove",showControls);
 
-document.addEventListener("keydown",function(e){
-
-if(e.key==="ArrowRight"){
-
-nextVideo();
-
-}
-
-if(e.key==="ArrowLeft"){
-
-previousVideo();
-
-}
-
-if(e.key==="r" || e.key==="R"){
-
-randomVideo();
-
-}
-
+document.addEventListener("keydown",(e)=>{
+ if(e.key==="ArrowRight") nextVideo();
+ if(e.key==="ArrowLeft") prevVideo();
+ if(e.key==="r"||e.key==="R") randomVideo();
+ if(e.key==="m"||e.key==="M") toggleMute();
 });
-
 </script>
-
-<script src="https://www.youtube.com/iframe_api"></script>
-
 </body>
-
 </html>
-```
